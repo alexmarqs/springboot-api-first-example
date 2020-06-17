@@ -1,0 +1,194 @@
+openapi: 3.0.2
+info:
+  title: API-First Spring Boot Example
+  description: "Simple example of API-First integration in a Spring Boot application!"
+  version: 1.0.0-SNAPSHOT
+externalDocs:
+  description: Check the source code here
+  url: https://github.com/alexmarqs
+servers:
+  - url: http://localhost:8080/v1
+    description: LOCAL
+  - url: https://api.example/v1
+    description: OTHER ENVIRONMENT
+tags:
+- name: books
+  description: Operations with books
+- name: tags
+  description: Operations with tags
+paths:
+  /books:
+    post:
+      tags:
+      - books
+      summary: Create book
+      description: Create a new book in the system
+      operationId: createBook
+      requestBody:
+        description: Book to be created
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookDTO'
+        required: true
+      responses:
+           201:
+            description: Successful operation
+      x-codegen-request-body-name: body
+    put:
+      tags:
+      - books
+      summary: Update book
+      description: Update book in the system
+      operationId: updateBook
+      requestBody:
+        description: Updated book
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookDTO'
+        required: true
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookDTO'
+        404:
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+      x-codegen-request-body-name: body
+  /books/{bookId}:
+    get:
+      tags:
+      - books
+      summary: Find book by identifier
+      description: Find book in the system
+      operationId: findBookById
+      parameters:
+      - name: bookId
+        in: path
+        description: The book id that needs to be fetched (use "123" for test purposes)
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookDTO'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: REQUEST_VALIDATION_ERROR
+                error: There are some validation errors
+        404:
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+    delete:
+      tags:
+      - books
+      summary: Delete book by identifier
+      description: Delete book in the system
+      operationId: deleteBook
+      parameters:
+      - name: bookId
+        in: path
+        description: The book id that needs to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: Successful operation
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: REQUEST_VALIDATION_ERROR
+                error: There are validation errors
+        404:
+          description: Book not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+  /books/tags:
+    get:
+      tags: 
+      - tags
+      summary: Find all tags
+      description: Find all tags in the system
+      operationId: findAllTags
+      responses:
+          200:
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TagDTO'
+components:
+  schemas:
+    BookDTO:
+      type: object
+      required:
+        - title
+        - tags
+        - status
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+          example: Harry Potter
+        summary:
+          type: string    
+          example: Harry Potter summary
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagDTO' 
+        status:
+          type: string
+          enum:
+          - available
+          - pending
+          - reserved
+          example: available           
+    TagDTO:
+      type: object
+      properties:
+        id: 
+          type: integer
+          format: int64
+        name:
+          type: string
+          example: fantasy
+    ErrorDTO:
+      type: object
+      properties:
+        code:
+          type: string
+          example: BOOK_NOT_FOUND
+        error:
+          type: string
+          example: The book was not found
