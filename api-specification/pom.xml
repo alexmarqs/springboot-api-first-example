@@ -10,7 +10,7 @@
     </parent>
 
     <properties>
-        <openapi.generator.version>4.3.1</openapi.generator.version>
+        <openapi.generator.version>5.1.0</openapi.generator.version>
         <openapi.package.api>example.api.controller.v1</openapi.package.api>
         <openapi.package.model>example.api.dto.v1</openapi.package.model>
         <swagger.annotations.version>1.5.22</swagger.annotations.version>
